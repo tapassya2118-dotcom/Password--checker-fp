@@ -1,5 +1,3 @@
-# Password--checker
-
 # Password Strength & Breach Checker
 
 A web-based cybersecurity tool designed to evaluate password strength and check whether passwords may have appeared in known data breaches.
