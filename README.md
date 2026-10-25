@@ -1,12 +1,12 @@
 # Password--checker
 
-# 🔐 Password Strength & Breach Checker
+# Password Strength & Breach Checker
 
 A web-based cybersecurity tool designed to evaluate password strength and check whether passwords may have appeared in known data breaches.
 
 ---
 
-## 📌 About the Project
+## About the Project
 
 The Password Strength & Breach Checker is an academic project that combines password-strength analysis with breach checking using the Have I Been Pwned API.
 
@@ -35,7 +35,7 @@ The project aims to demonstrate password-security concepts and encourage safer p
 - Demonstrate practical cybersecurity concepts.
 - Promote awareness of secure password practices.
 
-## 👥 Team Members
+## Team Members
 
 | Member | Name |
 |---|---|
@@ -53,7 +53,7 @@ The project aims to demonstrate password-security concepts and encourage safer p
 - Do not send complete passwords directly to external services.
 - Clearly communicate security limitations to users.
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 Password-Strength-Breach-Checker/
@@ -64,5 +64,5 @@ Password-Strength-Breach-Checker/
 ---
 
 <p align="center">
-  <b>Building Awareness. Strengthening Security. 🔐</b>
+  <b>Building Awareness. Strengthening Security. </b>
 </p>
