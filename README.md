@@ -1,12 +1,8 @@
-# Password--checker-fp
+# Password--checker
 
 # 🔐 Password Strength & Breach Checker
 
-### 🛡️ A Cybersecurity Web Application | Group 11
-
 A web-based cybersecurity tool designed to evaluate password strength and check whether passwords may have appeared in known data breaches.
-
-**Developed by SY B.Sc. Cyber Security students at Haribhai V. Desai College, Pune.**
 
 ---
 
@@ -16,14 +12,14 @@ The Password Strength & Breach Checker is an academic project that combines pass
 
 The project aims to demonstrate password-security concepts and encourage safer password practices.
 
-## ✨ Features
+## Features
 
-- 🔒 **Password Strength Analysis** — Evaluates password characteristics.
-- 🛡️ **Breach Detection** — Checks for exposure in known data breaches.
-- 💡 **Security Awareness** — Helps users understand password safety.
-- 🌐 **Web-Based Interface** — Provides a simple interface for users.
+- **Password Strength Analysis** — Evaluates password characteristics.
+- **Breach Detection** — Checks for exposure in known data breaches.
+- **Security Awareness** — Helps users understand password safety.
+- **Web-Based Interface** — Provides a simple interface for users.
 
-## 🧰 Technology Stack
+## Technology Stack
 
 | Technology | Purpose |
 |---|---|
@@ -32,7 +28,7 @@ The project aims to demonstrate password-security concepts and encourage safer p
 | JavaScript | Client-side functionality |
 | MySQL | Database management |
 
-## 🎯 Project Objectives
+## Project Objectives
 
 - Understand password-strength evaluation.
 - Explore password breach detection.
@@ -48,15 +44,8 @@ The project aims to demonstrate password-security concepts and encourage safer p
 | Member 3 | Tapassya Kothekar |
 | Member 4 | Lavina Susgohar |
 
-**Project Guide:** Ms. Jyoti Malusure
 
-**Institution:** Haribhai V. Desai College, Pune
-
-## 🚀 Project Status
-
-**Status:** In Progress 🚧
-
-## 🔐 Security & Privacy
+## Security & Privacy
 
 - Avoid storing passwords in plaintext.
 - Never expose API keys or database credentials.
@@ -71,17 +60,7 @@ Password-Strength-Breach-Checker/
 ├── README.md
 ├── index.html
 ├── style.css
-├── script.js
-├── database/
-└── docs/
 ```
-
-*Adjust the structure above to match the actual files in this repository.*
-
-## 📚 Academic Project
-
-Developed as part of the SY B.Sc. Cyber Security curriculum.
-
 ---
 
 <p align="center">
