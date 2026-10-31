@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Password Strength & Breach Checker</title>
+
+  <!-- All design is in style.css (keep both files in the same folder) -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Library used to make the SHA-1 hash of the password -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsSHA/3.3.1/sha1.min.js"></script>
+</head>
+<body>
+  <div class="container">
+
+    <h1>🔐 Password Checker</h1>
+    <p class="subtitle">Check your password strength and if it was leaked in any data breach</p>
+
+    <div class="card">
+      <label for="pwdInput">Enter Your Password</label>
+      <div class="password-box">
+        <input type="password" id="pwdInput" placeholder="Type your password here..." />
+        <button onclick="toggleVisibility()">👁</button>
+      </div>
+      <button class="check-btn" onclick="checkAll()">Check Password</button>
+
+      <!-- Strength result (hidden until the button is clicked) -->
+      <div class="result-section" id="strengthSection" style="display:none;">
+        <label>Password Strength</label>
+        <div class="strength-bar">
+          <div id="strength-fill"></div>
+        </div>
+        <div id="strength-result"></div>
+        <ul class="rules-list" id="rulesList"></ul>
+      </div>
+
+      <!-- Breach result (hidden until the button is clicked) -->
+      <div class="breach-box" id="breachSection" style="display:none;">
+        <label>Breach Status</label>
+        <div id="breach-result"></div>
+      </div>
+    </div>
+
+    <div class="tips">
+      <h2>💡 Password Tips</h2>
+      <ul>
+        <li>Use at least 8 characters</li>
+        <li>Mix uppercase, lowercase, numbers and symbols</li>
+        <li>Never use the same password on two websites</li>
+        <li>Avoid using your name, birthday or common words</li>
+        <li>Enable 2-Factor Authentication wherever possible</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <script>
+
+    // Show or hide the password when the eye button is clicked
+    function toggleVisibility() {
+      let input = document.getElementById("pwdInput");
+      input.type = input.type === "password" ? "text" : "password";
+    }
+
+    // Checks the password against 6 rules. Each rule passed = 1 point.
+    // Score 0-2 = Weak, 3-4 = Medium, 5 = Strong, 6 = Very Strong
+    function checkStrength(pwd) {
+      let rules = [
+        { label: "At least 8 characters",             pass: pwd.length >= 8 },
+        { label: "Contains uppercase letter (A-Z)",   pass: /[A-Z]/.test(pwd) },
+        { label: "Contains lowercase letter (a-z)",   pass: /[a-z]/.test(pwd) },
+        { label: "Contains a number (0-9)",           pass: /[0-9]/.test(pwd) },
+        { label: "Contains special character (!@#$%)",pass: /[!@#$%^&*()_+\-=\[\]{}]/.test(pwd) },
+        { label: "Not a common password",             pass: !["123456","password","qwerty","abc123",
+                                                              "iloveyou","admin","111111","india123",
+                                                              "krishna123","ram123","letmein","monkey"
+                                                             ].includes(pwd.toLowerCase()) }
+      ];
+
+      let score = rules.filter(r => r.pass).length;
+
+      let label, color, barWidth;
+      if      (score <= 2) { label = "❌ Weak";          color = "#dc2626"; barWidth = "25%"; }
+      else if (score <= 4) { label = "⚠️ Medium";        color = "#d97706"; barWidth = "55%"; }
+      else if (score === 5){ label = "✅ Strong";        color = "#16a34a"; barWidth = "80%"; }
+      else                 { label = "💪 Very Strong";   color = "#15803d"; barWidth = "100%"; }
+
+      return { rules, score, label, color, barWidth };
+    }
+
+    // Converts the password into a SHA-1 hash (a fixed secret code).
+    // We never send the real password to the internet, only a part of this hash.
+    function getSHA1(str) {
+      const shaObj = new jsSHA("SHA-1", "TEXT", { encoding: "UTF8" });
+      shaObj.update(str);
+      return shaObj.getHash("HEX").toUpperCase();
+    }
+
+    // Checks if the password was leaked, using the HaveIBeenPwned API.
+    // k-anonymity: only the first 5 characters of the hash go to the API.
+    // The rest is matched here on our side, so the password stays safe.
+    async function checkBreach(password) {
+      try {
+        const hash   = getSHA1(password);
+        const prefix = hash.slice(0, 5);   // sent to API
+        const suffix = hash.slice(5);      // matched locally
+
+        const response = await fetch(`https://api.pwnedpasswords.com/range/${prefix}`);
+        const text = await response.text();
+
+        // Look for our suffix in the list the API sent back
+        for (let line of text.split("\n")) {
+          const [hashSuffix, count] = line.split(":");
+          if (hashSuffix.trim() === suffix) {
+            return { breached: true, count: parseInt(count) };
+          }
+        }
+        return { breached: false, count: 0 };
+
+      } catch (err) {
+        // No internet or API problem
+        return { breached: null, count: 0 };
+      }
+    }
+
+    // Main function: runs when "Check Password" is clicked.
+    // Shows the strength result first, then the breach result.
+    async function checkAll() {
+      let pwd         = document.getElementById("pwdInput").value;
+      let strengthSec = document.getElementById("strengthSection");
+      let breachSec   = document.getElementById("breachSection");
+      let fillBar     = document.getElementById("strength-fill");
+      let strengthRes = document.getElementById("strength-result");
+      let breachRes   = document.getElementById("breach-result");
+      let rulesList   = document.getElementById("rulesList");
+
+      // Stop if the box is empty
+      if (!pwd) {
+        strengthSec.style.display = "block";
+        strengthRes.style.color   = "#555";
+        strengthRes.innerText     = "⚠️ Please enter a password first!";
+        fillBar.style.width       = "0%";
+        rulesList.innerHTML       = "";
+        breachSec.style.display   = "none";
+        return;
+      }
+
+      // Show strength result
+      let s = checkStrength(pwd);
+      strengthSec.style.display = "block";
+      fillBar.style.width       = s.barWidth;
+      fillBar.style.background  = s.color;
+      strengthRes.style.color   = s.color;
+      strengthRes.innerText     = `${s.label}  (${s.score}/6 rules passed)`;
+      rulesList.innerHTML       = s.rules.map(r =>
+        `<li class="${r.pass ? "pass" : "fail"}">${r.pass ? "✅" : "❌"} ${r.label}</li>`
+      ).join("");
+
+      // Show breach result (wait for the API answer)
+      breachSec.style.display = "block";
+      breachRes.style.color   = "#2563eb";
+      breachRes.innerText     = "🔍 Checking breach database...";
+
+      let b = await checkBreach(pwd);
+      if (b.breached === null) {
+        breachRes.style.color = "#d97706";
+        breachRes.innerText   = "⚠️ Could not check — No internet connection";
+      } else if (b.breached) {
+        breachRes.style.color = "#dc2626";
+        breachRes.innerText   = `🚨 LEAKED! Found ${b.count.toLocaleString()} times in real data breaches. Change this password immediately!`;
+      } else {
+        breachRes.style.color = "#16a34a";
+        breachRes.innerText   = "✅ Not found in any known data breach. Good!";
+      }
+    }
+
+  </script>
+</body>
+</html>
